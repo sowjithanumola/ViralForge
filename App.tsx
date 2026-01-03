@@ -2,6 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { UserData, RefinementTone } from './types.ts';
 import { generateViralStrategy } from './services/geminiService.ts';
 
+// Reusable Logo Component to match the user's provided image
+const BrandLogo: React.FC<{ size?: 'sm' | 'lg' }> = ({ size = 'sm' }) => {
+  const containerClasses = size === 'lg' 
+    ? "w-24 h-24 bg-[#4f46e5] rounded-[2rem] flex items-center justify-center text-5xl shadow-2xl shadow-indigo-600/40 relative group"
+    : "w-10 h-10 bg-[#4f46e5] rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-600/20 group-hover:rotate-6 transition-transform";
+  
+  const iconClasses = size === 'lg' ? "fa-solid fa-bolt text-white group-hover:scale-110 transition-transform" : "fa-solid fa-bolt text-xl";
+
+  return (
+    <div className={containerClasses}>
+      <i className={iconClasses}></i>
+      {size === 'lg' && <div className="absolute -top-1 -right-1 w-6 h-6 bg-pink-500 rounded-full animate-ping opacity-75"></div>}
+    </div>
+  );
+};
+
 // Enhanced Circular Progress Component
 const ProgressRing: React.FC<{ radius: number; stroke: number; progress: number }> = ({ radius, stroke, progress }) => {
   const normalizedRadius = radius - stroke * 2;
@@ -175,10 +191,7 @@ export default function App() {
     if (step === 0) {
       return (
         <div className="flex flex-col items-center text-center gap-8 py-12 animate-in fade-in zoom-in duration-700">
-          <div className="w-24 h-24 bg-indigo-600 rounded-3xl flex items-center justify-center text-5xl shadow-2xl shadow-indigo-600/40 relative group">
-             <i className="fa-solid fa-bolt text-white group-hover:scale-110 transition-transform"></i>
-             <div className="absolute -top-1 -right-1 w-6 h-6 bg-pink-500 rounded-full animate-ping opacity-75"></div>
-          </div>
+          <BrandLogo size="lg" />
           <div className="space-y-4">
             <h1 className="text-6xl md:text-8xl font-black tracking-tighter">
               Viral<span className="gradient-text">Forge</span>
@@ -322,9 +335,7 @@ export default function App() {
       <nav className="border-b border-white/5 bg-slate-950/40 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer group" onClick={restart}>
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-600/20 group-hover:rotate-6 transition-transform">
-               <i className="fa-solid fa-bolt text-lg"></i>
-            </div>
+            <BrandLogo size="sm" />
             <span className="text-2xl font-black tracking-tighter text-white">ViralForge</span>
           </div>
         </div>
