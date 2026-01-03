@@ -1,10 +1,14 @@
-
-import { GoogleGenAI, Type } from "@google/genai";
-import { UserData, RefinementTone } from "../types";
+import { GoogleGenAI } from "@google/genai";
+import { UserData, RefinementTone } from "../types.ts";
 
 export const generateViralStrategy = async (userData: UserData, tone?: RefinementTone) => {
   // Creating instance inside the function call ensures the most up-to-date API key is used
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error("Missing API Key. Please ensure the project environment is configured.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
   const model = "gemini-3-flash-preview";
   
   const systemInstruction = `You are "ViralForge", an expert viral video strategist. Your goal is to help creators maximize engagement.
@@ -35,11 +39,10 @@ export const generateViralStrategy = async (userData: UserData, tone?: Refinemen
       contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
       config: {
         systemInstruction,
-        temperature: 0.9, // Higher temperature for more creative/viral titles
+        temperature: 0.9, 
       }
     });
 
-    // Access the .text property directly as per the latest SDK guidelines
     return response.text || "No response generated.";
   } catch (error) {
     console.error("ViralForge API Error:", error);

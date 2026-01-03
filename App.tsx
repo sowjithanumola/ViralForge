@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
-import { UserData, RefinementTone } from './types';
-import { generateViralStrategy } from './services/geminiService';
+import { UserData, RefinementTone } from './types.ts';
+import { generateViralStrategy } from './services/geminiService.ts';
 
 // Enhanced Circular Progress Component
 const ProgressRing: React.FC<{ radius: number; stroke: number; progress: number }> = ({ radius, stroke, progress }) => {
