@@ -2,49 +2,47 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { UserData, RefinementTone } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-
 export const generateViralStrategy = async (userData: UserData, tone?: RefinementTone) => {
+  // Creating instance inside the function call ensures the most up-to-date API key is used
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
   const model = "gemini-3-flash-preview";
   
-  const systemPrompt = `You are "ViralForge", an expert viral video strategist. Your goal is to help creators maximize engagement.
-  Output Rules:
-  - Use clear headings.
+  const systemInstruction = `You are "ViralForge", an expert viral video strategist. Your goal is to help creators maximize engagement.
+  Rules:
+  - Focus on virality, curiosity, clarity, and emotion.
+  - No login prompts.
   - No emoji overload.
-  - No unnecessary explanations.
-  - Return in Markdown.`;
+  - Use clear headings and bullet points.
+  - Adapt suggestions strictly to the user's platform and topic.`;
 
-  const userPrompt = `Generate a viral strategy for a video with these details:
+  const userPrompt = `Forge a viral strategy for this video:
   - Platform: ${userData.platform}
   - Topic: ${userData.topic}
   - Audience: ${userData.audience}
   - Key Emotion: ${userData.emotion}
   - Style: ${userData.style}
-  - Main Benefit: ${userData.benefit}
-  ${tone ? `- NEW Tone Requirement: Make the titles and hooks more ${tone}.` : ''}
+  - Main Benefit/Surprise: ${userData.benefit}
+  ${tone ? `- Tone Adjustment: Make it significantly more ${tone}.` : ''}
 
   Please generate:
-  A) 5 Viral Video Titles (Short, clear, curiosity-driven, optimized for ${userData.platform})
-  B) 3 Scroll-Stopping Hooks (Spoken-friendly, bold, attention-grabbing)
-  C) Suggested Video Flow:
-     - Hook (0–3 sec)
-     - Context (3–10 sec)
-     - Main Value (10–40 sec)
-     - Payoff / CTA (last 5 sec)`;
+  A) 5 Viral Video Titles
+  B) 3 Scroll-Stopping Hooks
+  C) Suggested Video Flow (Hook, Context, Main Value, Payoff)`;
 
   try {
     const response = await ai.models.generateContent({
       model,
-      contents: userPrompt,
+      contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
       config: {
-        systemInstruction: systemPrompt,
-        temperature: 0.8,
+        systemInstruction,
+        temperature: 0.9, // Higher temperature for more creative/viral titles
       }
     });
 
-    return response.text;
+    // Access the .text property directly as per the latest SDK guidelines
+    return response.text || "No response generated.";
   } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw new Error("Failed to generate content. Please try again.");
+    console.error("ViralForge API Error:", error);
+    throw new Error("The Forge is currently overheated. Please check your connection and try again.");
   }
 };
